@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	github.com/ClickHouse/clickhouse-go v1.4.5
-	github.com/hashicorp/go-version v1.3.0
+	github.com/hashicorp/go-version v1.4.0
 	gorm.io/gorm v1.22.0
 )
 
