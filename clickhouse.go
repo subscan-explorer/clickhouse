@@ -225,11 +225,14 @@ func (dialector Dialector) DataTypeOf(field *schema.Field) string {
 		}
 		return "Float64"
 	case schema.String:
-		if field.Size == 0 {
-			return "String"
-		}
-		return fmt.Sprintf("FixedString(%d)", field.Size)
+		return "String"
+		// if field.Size == 0 {
+		// 	return "String"
+		// }
+		// return fmt.Sprintf("FixedString(%d)", field.Size)
 	case schema.Bytes:
+		return "String"
+	case "json":
 		return "String"
 	case schema.Time:
 		// TODO: support TimeZone

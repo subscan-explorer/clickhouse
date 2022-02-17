@@ -46,7 +46,9 @@ func (m Migrator) FullDataTypeOf(field *schema.Field) (expr clause.Expr) {
 			m.Dialector.BindVarTo(defaultStmt, defaultStmt, field.DefaultValueInterface)
 			expr.SQL += " DEFAULT " + m.Dialector.Explain(defaultStmt.SQL.String(), field.DefaultValueInterface)
 		} else if field.DefaultValue != "(-)" {
-			expr.SQL += " DEFAULT " + field.DefaultValue
+			if expr.SQL != "String" || field.DefaultValue != "null" {
+				expr.SQL += " DEFAULT " + field.DefaultValue
+			}
 		}
 	}
 
