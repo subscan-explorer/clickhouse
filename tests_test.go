@@ -12,14 +12,21 @@ import (
 
 var DB *gorm.DB
 
-const dbDSN = "clickhouse://gorm:gorm@127.0.0.1:9942/gorm?dial_timeout=10s&read_timeout=20s"
+const defaultDBDSN = "http://gorm:gorm@127.0.0.1:9941/gorm?dial_timeout=10s&read_timeout=20s"
+
+func testDSN() string {
+	if dsn := os.Getenv("CLICKHOUSE_TEST_DSN"); dsn != "" {
+		return dsn
+	}
+	return defaultDBDSN
+}
 
 func init() {
 	var (
 		err error
 	)
 
-	if DB, err = gorm.Open(clickhouse.Open(dbDSN), &gorm.Config{}); err != nil {
+	if DB, err = gorm.Open(clickhouse.Open(testDSN()), &gorm.Config{}); err != nil {
 		log.Printf("failed to connect database, got error %v", err)
 		os.Exit(1)
 	}

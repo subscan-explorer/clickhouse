@@ -109,7 +109,7 @@ func TestMigrator_HasIndex(t *testing.T) {
 }
 
 func TestMigrator_DontSupportEmptyDefaultValue(t *testing.T) {
-	options, err := clickhousego.ParseDSN(dbDSN)
+	options, err := clickhousego.ParseDSN(testDSN())
 	if err != nil {
 		t.Fatalf("Can not parse dsn, got error %v", err)
 	}
@@ -153,6 +153,24 @@ func TestMigrator_DontSupportEmptyDefaultValue(t *testing.T) {
 	}
 }
 
+func TestColumnTypesNullableDoesNotPanic(t *testing.T) {
+	columnTypes, err := DB.Migrator().ColumnTypes("users")
+	if err != nil {
+		t.Fatalf("failed to get column types, got error %v", err)
+	}
+	for _, columnType := range columnTypes {
+		ct := columnType
+		t.Run(ct.Name(), func(t *testing.T) {
+			defer func() {
+				if r := recover(); r != nil {
+					t.Fatalf("Nullable panicked for column %s: %v", ct.Name(), r)
+				}
+			}()
+			_, _ = ct.Nullable()
+		})
+	}
+}
+
 func TestMigrator_OnClusterSupport(t *testing.T) {
 	type ClusterTable struct {
 		ID        uint64
@@ -164,7 +182,7 @@ func TestMigrator_OnClusterSupport(t *testing.T) {
 	sqlStrings := make([]string, 0)
 
 	// Create a new DB instance for this test
-	options, err := clickhousego.ParseDSN(dbDSN)
+	options, err := clickhousego.ParseDSN(testDSN())
 	if err != nil {
 		t.Fatalf("Can not parse dsn, got error %v", err)
 	}

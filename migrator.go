@@ -413,6 +413,9 @@ func (m Migrator) ColumnTypes(value interface{}) ([]gorm.ColumnType, error) {
 			}
 
 			column.ColumnTypeValue = column.DataTypeValue
+			dataType := strings.TrimSpace(column.DataTypeValue.String)
+			column.NullableValue.Bool = strings.HasPrefix(dataType, "Nullable(")
+			column.NullableValue.Valid = dataType != ""
 
 			if decimalSizeValue != nil {
 				column.DecimalSizeValue.Int64 = int64(*decimalSizeValue)
